@@ -19,11 +19,12 @@ class SteamDeals::Deal
   def self.scrape_deals_list #only scrapes daily deal for now
     @@all.clear
     doc = Nokogiri::HTML(open("https://steamdb.info/sales/"))
-    app_list = doc.css("#sales-section-dailydeal .table-sales .appimg")
+    app_list = doc.css("#sales-section-daily-deal .table-sales .appimg")
     app_list.each do |app|
       app_name = app.css("a.b")[0].text
       app_url ="https://steamdb.info/#{app.css("a.b")[0]["href"]}"
       discount = app.css(".price-discount i").text
+      discount = app.css(".price-discount-minor i").text if discount.empty?
       price = "#{app.css("td")[4].text}"
       game = SteamDeals::Deal.new(app_name,app_url,discount,price)
       @@all << game

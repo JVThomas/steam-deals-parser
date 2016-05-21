@@ -1,3 +1,4 @@
+require 'pry'
 class SteamDeals::CLI
   
   def start
