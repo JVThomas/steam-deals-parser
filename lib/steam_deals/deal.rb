@@ -1,3 +1,4 @@
+require 'pry'
 class SteamDeals::Deal
   
   @@all = []
@@ -16,19 +17,20 @@ class SteamDeals::Deal
     scrape_add_details
   end
 
-  def self.scrape_deals_list #only scrapes daily deal for now
+  def self.scrape_weeklong_deals
+    @@all.clear
+    doc = Nokogiri::HTML(open("https://steamdb.info/sales/"))
+    app_list = doc.css("#sales-section-weeklong-deals .table-sales .appimg")
+    scrape_initial_details(app_list)
+    self.all
+  end
+
+
+  def self.scrape_daily_deals 
     @@all.clear
     doc = Nokogiri::HTML(open("https://steamdb.info/sales/"))
     app_list = doc.css("#sales-section-daily-deal .table-sales .appimg")
-    app_list.each do |app|
-      app_name = app.css("a.b")[0].text
-      app_url ="https://steamdb.info/#{app.css("a.b")[0]["href"]}"
-      discount = app.css(".price-discount i").text
-      discount = app.css(".price-discount-minor i").text if discount.empty?
-      price = "#{app.css("td")[4].text}"
-      game = SteamDeals::Deal.new(app_name,app_url,discount,price)
-      @@all << game
-    end
+    scrape_initial_details(app_list)
     self.all
   end
 
@@ -38,6 +40,19 @@ class SteamDeals::Deal
 
   def self.app_at(num)
     @@all[num-1]
+  end
+
+
+  def self.scrape_initial_details(app_list)
+    app_list.each do |app|
+      app_name = app.css("a.b")[0].text
+      app_url ="https://steamdb.info/#{app.css("a.b")[0]["href"]}"
+      discount = app.css(".price-discount i").text
+      discount = app.css(".price-discount-minor i").text if discount.empty?
+      price = "#{app.css("td")[4].text}"
+      game = SteamDeals::Deal.new(app_name,app_url,discount,price)
+      @@all << game
+    end
   end
 
   def scrape_add_details

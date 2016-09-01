@@ -4,39 +4,56 @@ class SteamDeals::CLI
   def start
     input = ""
     while input != "exit"
-      puts "Here are the apps listed for today's Steam Daily Deals"
-      puts "-------------------------------------------------------"
-      SteamDeals::Deal.scrape_deals_list
-      SteamDeals::Deal.all.each.with_index(1) do |app, index|
-        puts "#{index}. #{app.name}"
-      end
-      puts " "
-    
-      puts "Which game would you like to see in detail? (Enter the number associtaed with game on list)"
-      puts "or you can enter 'exit' to exit out of the program"
-      input = gets.chomp
-
-      if input.downcase == "exit"
+      puts "What Sale would you like to see?\n 1. Daily Deals\n 2. Weeklong Deals\n"
+      puts "(Or type 'exit' to end program)\n\n"
+      input = gets.strip.downcase
+      case input
+      when "1"
+        display_daily_deals
+      when "2"
+        display_weeklong_deals
+      when "exit"
         puts "\nGoodbye!"
-      elsif input.to_i > 0 && game = SteamDeals::Deal.app_at(input.to_i)        
-        display_details(game)
       else
-        puts "\nInvalid input. Try again.\n" 
+        puts "\nInvalid input, try again!\n"
       end
     end
   end
 
+  def display_daily_deals
+    puts "\nHere are the apps listed for today's Steam Daily Deals"
+    puts "-------------------------------------------------------"
+    SteamDeals::Deal.scrape_daily_deals
+    SteamDeals::Deal.all.each.with_index(1) do |app, index|
+      puts "#{index}. #{app.name}"
+    end
+    puts " "
+    show_game_list
+  end
+
+  def display_weeklong_deals
+    puts "\nNow retreiving Weeklong Deals. Please be patient"
+    SteamDeals::Deal.scrape_weeklong_deals
+    puts "Here are the apps listed for today's Steam Daily Deals"
+    puts "-------------------------------------------------------"
+    SteamDeals::Deal.all.each.with_index(1) do |app,index|
+      puts "#{index}. #{app.name}"
+    end
+    puts " "
+    show_game_list
+  end
+
   def display_details(game)
     input = ""
-    while input.downcase != "exit"
+    while input != "exit"
       puts ""
-      puts "What details would you like to see? (Enter number choice or type exit to return to previous menu"
+      puts "What details would you like to see? (Enter number choice or type exit to return to previous menu)"
       puts ""
       puts "1. Sale Details"
       puts "2. Game Details"
       puts ""
       
-      input = gets.chomp
+      input = gets.chomp.downcase
       case input
       when "1"
         show_sale_details(game)
@@ -78,4 +95,22 @@ class SteamDeals::CLI
     puts "---------------------------------------------------"
     puts ""
   end
+
+  def show_game_list
+    input = ""
+    while input != "exit"
+      puts "Which game would you like to see in detail? (Enter the number associtaed with game on list)"
+      puts "or you can enter 'exit' to return to previous menu"
+      input = gets.chomp.downcase
+
+      if input.downcase == "exit"
+        puts "\nReturning to previous menu"
+      elsif input.to_i > 0 && game = SteamDeals::Deal.app_at(input.to_i)        
+        display_details(game)
+      else
+        puts "\nInvalid input. Try again.\n" 
+      end
+    end
+  end
+
 end
