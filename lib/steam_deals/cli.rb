@@ -3,8 +3,11 @@ class SteamDeals::CLI
   def start
     input = ""
     while input != "exit"
-      puts "What Sale would you like to see?\n 1. Daily Deals\n 2. Weeklong Deals\n"
-      puts "(Or type 'exit' to end program)\n\n"
+      puts "\nWhich Sale would you like to see?"
+      puts "---------------------------------"
+      puts "1. Daily Deals\n"
+      puts "2. Weeklong Deals" 
+      puts "(Or type 'exit' to end program)\n"
       input = gets.strip.downcase
       case input
       when "1"
@@ -20,6 +23,7 @@ class SteamDeals::CLI
   end
 
   def display_daily_deals
+    puts "\nNow retreiving Daily Deals. Please be patient\n"
     puts "\nHere are the apps listed for today's Steam Daily Deals"
     puts "-------------------------------------------------------"
     SteamDeals::Deal.scrape_daily_deals
@@ -31,9 +35,9 @@ class SteamDeals::CLI
   end
 
   def display_weeklong_deals
-    puts "\nNow retreiving Weeklong Deals. Please be patient"
+    puts "\nNow retreiving Weeklong Deals. Please be patient\n"
     SteamDeals::Deal.scrape_weeklong_deals
-    puts "Here are the apps listed for today's Steam Daily Deals"
+    puts "Here are the apps listed for today's Steam Weeklong Deals"
     puts "-------------------------------------------------------"
     SteamDeals::Deal.all.each.with_index(1) do |app,index|
       puts "#{index}. #{app.name}"
@@ -68,7 +72,7 @@ class SteamDeals::CLI
   end
 
   def show_sale_details(game)
-    puts ""
+    puts "Loading sale details...\n\n"
     puts "Here are the sale details"
     puts "-------------------------"
     puts "Name : #{game.name}"
@@ -79,7 +83,8 @@ class SteamDeals::CLI
   end
 
   def show_app_details(game)
-    puts ""
+    puts "Loading Game Details...\n\n"
+    game.scrape_add_details
     puts "Here are the app details"
     puts "------------------------"
     puts "Name : #{game.name}"
@@ -103,7 +108,7 @@ class SteamDeals::CLI
       input = gets.chomp.downcase
 
       if input.downcase == "exit"
-        puts "\nReturning to previous menu"
+        puts "\nReturning to previous menu\n"
       elsif input.to_i > 0 && game = SteamDeals::Deal.app_at(input.to_i)        
         display_details(game)
       else

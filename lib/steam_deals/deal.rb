@@ -13,7 +13,6 @@ class SteamDeals::Deal
     @publisher = "N/A"
     @supported_os = "N/A"
     @app_desc = "N/A"
-    scrape_add_details
   end
 
   def self.scrape_weeklong_deals
