@@ -24,13 +24,8 @@ class SteamDeals::CLI
 
   def display_daily_deals
     puts "\nNow retreiving Daily Deals. Please be patient\n"
-    puts "\nHere are the apps listed for today's Steam Daily Deals"
-    puts "-------------------------------------------------------"
     SteamDeals::Deal.scrape_daily_deals
-    SteamDeals::Deal.all.each.with_index(1) do |app, index|
-      puts "#{index}. #{app.name}"
-    end
-    puts " "
+    puts "\nHere are the apps listed for today's Steam Daily Deals"
     show_game_list
   end
 
@@ -38,11 +33,6 @@ class SteamDeals::CLI
     puts "\nNow retreiving Weeklong Deals. Please be patient\n"
     SteamDeals::Deal.scrape_weeklong_deals
     puts "Here are the apps listed for today's Steam Weeklong Deals"
-    puts "-------------------------------------------------------"
-    SteamDeals::Deal.all.each.with_index(1) do |app,index|
-      puts "#{index}. #{app.name}"
-    end
-    puts " "
     show_game_list
   end
 
@@ -50,7 +40,7 @@ class SteamDeals::CLI
     input = ""
     while input != "exit"
       puts ""
-      puts "What details would you like to see? (Enter number choice or type exit to return to previous menu)"
+      puts "What details would you like to see about #{game.name}? (Enter number choice or type exit to return to previous menu)"
       puts ""
       puts "1. Sale Details"
       puts "2. Game Details"
@@ -103,6 +93,11 @@ class SteamDeals::CLI
   def show_game_list
     input = ""
     while input != "exit"
+      puts "-------------------------------------------------------"
+      SteamDeals::Deal.all.each.with_index(1) do |app, index|
+        puts "#{index}. #{app.name}"
+      end
+      puts " "
       puts "Which game would you like to see in detail? (Enter the number associtaed with game on list)"
       puts "or you can enter 'exit' to return to previous menu"
       input = gets.chomp.downcase
@@ -112,8 +107,11 @@ class SteamDeals::CLI
       elsif input.to_i > 0 && game = SteamDeals::Deal.app_at(input.to_i)        
         display_details(game)
       else
-        puts "\nInvalid input. Try again.\n" 
+        puts "\nInvalid input. Try again.\n"
+        puts "Reloading..."
+        sleep(1) 
       end
+
     end
   end
 
