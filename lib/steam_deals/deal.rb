@@ -2,12 +2,13 @@ class SteamDeals::Deal
   
   @@all = []
   
-  attr_accessor :name, :discount, :price, :details_url, :app_type, :developer, :publisher, :supported_os, :app_desc 
+  attr_accessor :name, :discount, :price, :details_url, :app_type, :developer, :publisher, :supported_os, :app_desc, :highest_discount 
 
-  def initialize(name = "", url = "", discount = "", price = "")
+  def initialize(name = "", url = "", discount = "", price = "", highest_discount = "")
     @name = name
     @details_url = url
     @discount = discount
+    @highest_discount = highest_discount
     @price = price
     @developer = "N/A"
     @publisher = "N/A"
@@ -45,10 +46,10 @@ class SteamDeals::Deal
     app_list.each do |app|
       app_name = app.css("a.b")[0].text
       app_url ="https://steamdb.info/#{app.css("a.b")[0]["href"]}"
-      discount = app.css(".price-discount i").text
-      discount = app.css(".price-discount-minor i").text if discount.empty?
+      discount = app.css("td")[3].text
+      highest_discount = app.css("td")[2].css(".highest-discount").text
       price = "#{app.css("td")[4].text}"
-      game = SteamDeals::Deal.new(app_name,app_url,discount,price)
+      game = SteamDeals::Deal.new(app_name, app_url, discount,  price, highest_discount)
       @@all << game
     end
   end

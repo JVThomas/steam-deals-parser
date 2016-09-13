@@ -1,6 +1,7 @@
 class SteamDeals::CLI
   
   def start
+    clear_terminal
     input = ""
     while input != "exit"
       puts "\nWhich Sale would you like to see?"
@@ -23,6 +24,7 @@ class SteamDeals::CLI
   end
 
   def display_daily_deals
+    clear_terminal
     puts "\nNow retreiving Daily Deals. Please be patient\n"
     SteamDeals::Deal.scrape_daily_deals
     puts "\nHere are the apps listed for today's Steam Daily Deals"
@@ -30,6 +32,7 @@ class SteamDeals::CLI
   end
 
   def display_weeklong_deals
+    clear_terminal
     puts "\nNow retreiving Weeklong Deals. Please be patient\n"
     SteamDeals::Deal.scrape_weeklong_deals
     puts "Here are the apps listed for today's Steam Weeklong Deals"
@@ -37,6 +40,7 @@ class SteamDeals::CLI
   end
 
   def display_details(game)
+    clear_terminal
     input = ""
     while input != "exit"
       puts ""
@@ -54,25 +58,27 @@ class SteamDeals::CLI
         show_app_details(game)
       when "exit"
         puts "\nReturning to menu\n"
+        clear_terminal
       else
         puts "\nInvalid input. Try again.\n"
       end
-    
     end
   end
 
   def show_sale_details(game)
+    clear_terminal
     puts "Loading sale details...\n\n"
     puts "Here are the sale details"
     puts "-------------------------"
     puts "Name : #{game.name}"
-    puts "Discount : #{game.discount}"
+    puts "Discount : #{game.discount}, #{game.highest_discount}"
     puts "Sale Price : #{game.price}"
     puts "--------------------------"
     puts ""
   end
 
   def show_app_details(game)
+    clear_terminal
     puts "Loading Game Details...\n\n"
     game.scrape_add_details
     puts "Here are the app details"
@@ -91,9 +97,11 @@ class SteamDeals::CLI
   end
 
   def show_game_list
+    clear_terminal
     input = ""
     while input != "exit"
-      puts "-------------------------------------------------------"
+      puts "Here are the apps..."
+      puts "---------------------------------------------------"
       SteamDeals::Deal.all.each.with_index(1) do |app, index|
         puts "#{index}. #{app.name}"
       end
@@ -104,6 +112,7 @@ class SteamDeals::CLI
 
       if input.downcase == "exit"
         puts "\nReturning to previous menu\n"
+        clear_terminal
       elsif input.to_i > 0 && game = SteamDeals::Deal.app_at(input.to_i)        
         display_details(game)
       else
@@ -111,8 +120,11 @@ class SteamDeals::CLI
         puts "Reloading..."
         sleep(1) 
       end
-
     end
+  end
+
+  def clear_terminal
+    puts "\e[H\e[2J"
   end
 
 end
