@@ -13,7 +13,6 @@ describe 'SteamDeal::Deal' do
     end
     it 'scrapes the various sales categories' do
       SteamDeals::Deal.scrape_sections
-      binding.pry
       expect(SteamDeals::Deal.sections).to_not be_empty
     end
   end
