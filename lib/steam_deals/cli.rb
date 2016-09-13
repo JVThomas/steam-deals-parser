@@ -3,37 +3,53 @@ class SteamDeals::CLI
   def start
     clear_terminal
     input = ""
+    SteamDeals::Deal.scrape_sections
+    sections_length = SteamDeals::Deal.sections.length
     while input != "exit"
       puts "\nWhich Sale would you like to see?"
       puts "---------------------------------"
-      puts "1. Daily Deals\n"
-      puts "2. Weeklong Deals" 
+      SteamDeals::Deal.sections.each_with_index do |section, index|
+        puts "#{index+1}. #{section[:name]}\n"
+      end
       puts "(Or type 'exit' to end program)\n"
+      
       input = gets.strip.downcase
-      case input
-      when "1"
-        display_daily_deals
-      when "2"
-        display_weeklong_deals
-      when "exit"
+      
+      if input == "exit"
         puts "\nGoodbye!"
+      elsif input.scan("/\D+/").length > 0
+        clear_terminal
+        puts "Invalid input. Please try again\n"
+      elsif input.to_i > sections_length || input.to_i < 1
+        clear_terminal
+        puts "Number out of range. Please try again\n"
       else
-        puts "\nInvalid input, try again!\n"
+        display_section_deals(SteamDeals::Deal.section_at(input.to_i))
       end
     end
   end
 
+  def display_section_deals(section)
+    clear_terminal
+    puts "Now retrieving #{section[:name]}. Please be patient."
+    SteamDeals::Deal.scrape_section_apps(section)
+    puts "\nHere are the apps listed for today's #{section[:name]}"
+    show_game_list
+  end
+
+  #removal later
   def display_daily_deals
     clear_terminal
-    puts "\nNow retreiving Daily Deals. Please be patient\n"
+    puts "\nNow retrieving Daily Deals. Please be patient\n"
     SteamDeals::Deal.scrape_daily_deals
     puts "\nHere are the apps listed for today's Steam Daily Deals"
     show_game_list
   end
 
+  #removal later
   def display_weeklong_deals
     clear_terminal
-    puts "\nNow retreiving Weeklong Deals. Please be patient\n"
+    puts "\nNow retrieving Weeklong Deals. Please be patient\n"
     SteamDeals::Deal.scrape_weeklong_deals
     puts "Here are the apps listed for today's Steam Weeklong Deals"
     show_game_list
@@ -102,7 +118,7 @@ class SteamDeals::CLI
     while input != "exit"
       puts "Here are the apps..."
       puts "---------------------------------------------------"
-      SteamDeals::Deal.all.each.with_index(1) do |app, index|
+      SteamDeals::Deal.apps.each.with_index(1) do |app, index|
         puts "#{index}. #{app.name}"
       end
       puts " "
@@ -111,11 +127,12 @@ class SteamDeals::CLI
       input = gets.chomp.downcase
 
       if input.downcase == "exit"
-        puts "\nReturning to previous menu\n"
         clear_terminal
+        puts "\nReturning to previous menu\n"
       elsif input.to_i > 0 && game = SteamDeals::Deal.app_at(input.to_i)        
         display_details(game)
       else
+        clear_terminal
         puts "\nInvalid input. Try again.\n"
         puts "Reloading..."
         sleep(1) 

@@ -19,4 +19,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec",  '~> 3.4.0', ">= 3.4.0"
   spec.add_development_dependency "nokogiri", '~> 1.6.8', ">= 1.6.8"
   spec.add_development_dependency "pry",  '~> 0.10.3', ">= 0.10.3"
+  spec.add_development_dependency "vcr"
+  spec.add_development_dependency "webmock"
 end
