@@ -29,24 +29,6 @@ class SteamDeals::Deal
     self.sections
   end
 
-  #removal later
-  def self.scrape_weeklong_deals
-    @@apps.clear
-    doc = Nokogiri::HTML(open("https://steamdb.info/sales/"))
-    app_list = doc.css("#sales-section-weeklong-deals .table-sales .appimg")
-    scrape_initial_details(app_list)
-    self.apps
-  end
-
-  #removal later
-  def self.scrape_daily_deals 
-    @@all.clear
-    doc = Nokogiri::HTML(open("https://steamdb.info/sales/"))
-    app_list = doc.css("#sales-section-daily-deal .table-sales .appimg")
-    scrape_initial_details(app_list)
-    self.apps
-  end
-
   def self.apps
     @@apps
   end

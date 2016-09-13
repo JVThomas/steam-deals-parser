@@ -37,24 +37,6 @@ class SteamDeals::CLI
     show_game_list
   end
 
-  #removal later
-  def display_daily_deals
-    clear_terminal
-    puts "\nNow retrieving Daily Deals. Please be patient\n"
-    SteamDeals::Deal.scrape_daily_deals
-    puts "\nHere are the apps listed for today's Steam Daily Deals"
-    show_game_list
-  end
-
-  #removal later
-  def display_weeklong_deals
-    clear_terminal
-    puts "\nNow retrieving Weeklong Deals. Please be patient\n"
-    SteamDeals::Deal.scrape_weeklong_deals
-    puts "Here are the apps listed for today's Steam Weeklong Deals"
-    show_game_list
-  end
-
   def display_details(game)
     clear_terminal
     input = ""
